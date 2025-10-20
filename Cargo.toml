@@ -1,0 +1,11 @@
+[package]
+name = "picrs-web"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+console_error_panic_hook = "0.1.7"
+leptos = { version = "0.8.10", features = ["csr"] }
+picrs-lib = "0.1.0"
+rand = "0.9.2"
+getrandom = { version = "0.3", features = ["wasm_js"] }
