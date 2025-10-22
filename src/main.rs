@@ -13,12 +13,12 @@ fn Grid() -> impl IntoView {
     let (colcount, set_colcount) = signal(5 as usize);
     let table: NodeRef<Div> = NodeRef::new();
 
-    let cell_size = Signal::derive(move || {
-        min(
-            table.get().unwrap().client_height() as usize / rowcount.get(),
-            table.get().unwrap().client_width() as usize / colcount.get(),
-        )
-    });
+    // let cell_size = Signal::derive(move || {
+    //     min(
+    //         table.get().unwrap().client_height() as usize / rowcount.get(),
+    //         table.get().unwrap().client_width() as usize / colcount.get(),
+    //     )
+    // });
 
     view! {
         <div>
@@ -33,7 +33,7 @@ fn Grid() -> impl IntoView {
                 each=move || 0..rowcount.get()
                 key=|index| *index
                 children=move |_| {
-                    view! { <Row style:height=move || format!("{}px", cell_size.get()) size=cell_size n=colcount></Row> }
+                    view! { <Row /* style:height=move || format!("{}px", cell_size.get()) size=cell_size */ n=colcount></Row> }
                 }
             />
         </div>
@@ -59,7 +59,7 @@ fn Slider(read: ReadSignal<usize>, write: WriteSignal<usize>, name: String) -> i
 }
 
 #[component]
-fn Row(n: ReadSignal<usize>, #[prop(into)] size: Signal<usize>) -> impl IntoView {
+fn Row(n: ReadSignal<usize>, /*#[prop(into)] size: Signal<usize> */) -> impl IntoView {
     view! {
         <div class="row">
             <For
@@ -67,7 +67,7 @@ fn Row(n: ReadSignal<usize>, #[prop(into)] size: Signal<usize>) -> impl IntoView
                 key=|index| *index
                 children=move |_| {
                     view! {
-                        <div style:width=move || format!("{}px", size.get()) class="cell"></div>
+                        <div /*style:width=move || format!("{}px", size.get()) */ class="cell"></div>
                     }
                 }
             />
