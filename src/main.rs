@@ -1,29 +1,39 @@
+use std::cmp::min;
+
+use leptos::html::Div;
 use leptos::mount::mount_to_body;
 use leptos::prelude::*;
-use picrs_lib::table::Table;
 fn main() {
     console_error_panic_hook::set_once();
     mount_to_body(Grid);
 }
 #[component]
 fn Grid() -> impl IntoView {
-    let (rowcount, set_rowcount) = signal(5);
-    let (colcount, set_colcount) = signal(5);
+    let (rowcount, set_rowcount) = signal(5 as usize);
+    let (colcount, set_colcount) = signal(5 as usize);
+    let table: NodeRef<Div> = NodeRef::new();
+
+    let cell_size = Signal::derive(move || {
+        min(
+            table.get().unwrap().client_height() as usize / rowcount.get(),
+            table.get().unwrap().client_width() as usize / colcount.get(),
+        )
+    });
 
     view! {
         <div>
-            <Slider read=rowcount write=set_rowcount></Slider>
+            <Slider name="number of rows: ".to_string() read=rowcount write=set_rowcount></Slider>
         </div>
         <div>
-            <Slider read=colcount write=set_colcount></Slider>
+            <Slider name="number of cols: ".to_string() read=colcount write=set_colcount></Slider>
         </div>
 
-        <div>
+        <div class="table" node_ref=table>
             <For
                 each=move || 0..rowcount.get()
                 key=|index| *index
                 children=move |_| {
-                    view! { <RowList n=colcount></RowList> }
+                    view! { <Row style:height=move || format!("{}px", cell_size.get()) size=cell_size n=colcount></Row> }
                 }
             />
         </div>
@@ -31,14 +41,14 @@ fn Grid() -> impl IntoView {
 }
 
 #[component]
-fn Slider(read: ReadSignal<usize>, write: WriteSignal<usize>) -> impl IntoView {
+fn Slider(read: ReadSignal<usize>, write: WriteSignal<usize>, name: String) -> impl IntoView {
     view! {
-        <label for="slider">"number of rows: " {read}</label>
+        <label for="slider">{name} {read}</label>
         <input
             type="range"
             id="slider"
             min="1"
-            max="20"
+            max="50"
             value=read
             on:input=move |ev| {
                 let value = event_target_value(&ev).parse::<usize>().unwrap_or(0);
@@ -49,14 +59,16 @@ fn Slider(read: ReadSignal<usize>, write: WriteSignal<usize>) -> impl IntoView {
 }
 
 #[component]
-fn RowList(n: ReadSignal<usize>) -> impl IntoView {
+fn Row(n: ReadSignal<usize>, #[prop(into)] size: Signal<usize>) -> impl IntoView {
     view! {
-        <div>
+        <div class="row">
             <For
                 each=move || 0..n.get()
                 key=|index| *index
-                children=move |index| {
-                    view! { <button>{format!("Button {}", index + 1)}</button> }
+                children=move |_| {
+                    view! {
+                        <div style:width=move || format!("{}px", size.get()) class="cell"></div>
+                    }
                 }
             />
         </div>
