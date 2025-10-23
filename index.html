@@ -6,24 +6,36 @@
 <style>
   body {
     height: 100vh;
+    margin: 0;
   }
 
   .cell {
-    flex: 1;
     box-sizing: border-box;
-    border: 1px solid black;
-    display: inline-block;
+    border-width: 1px;
+
+    position: absolute;
+
+    border-top-style: none;
+    border-left-style: none;
+    border-bottom-style: solid;
+    border-right-style: solid;
+
     aspect-ratio: 1/1;
   }
-  .table {
-    display: block;
+
+  .grid {
+    border: solid 1px;
     width: 100%;
     height: 100%;
     max-width: 500px;
     max-height: 500px;
-    margin: 0px;
   }
-  .row {
-    display: flex;
+
+  .row:first-child .cell {
+    border-top-style: solid;
+  }
+
+  .cell:first-child {
+    border-left-style: solid;
   }
 </style>
