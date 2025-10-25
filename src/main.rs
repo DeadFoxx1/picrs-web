@@ -1,17 +1,20 @@
-use std::cmp::min;
-
 use leptos::html::Div;
 use leptos::mount::mount_to_body;
-use leptos::prelude::*;
+use leptos::{ev, prelude::*};
 fn main() {
     console_error_panic_hook::set_once();
-    mount_to_body(Grid);
+    mount_to_body(App);
 }
 #[component]
-fn Grid() -> impl IntoView {
+fn App() -> impl IntoView {
     let (rowcount, set_rowcount) = signal(5 as usize);
     let (colcount, set_colcount) = signal(5 as usize);
     let grid: NodeRef<Div> = NodeRef::new();
+
+    let handle = window_event_listener(ev::resize, move |_| {
+        set_rowcount.set(rowcount.get())
+    });
+    on_cleanup(move || handle.remove());
 
     //this should be updated as soon as the grid is mounted
     let (cell_size, set_cell_size) = signal(0.0);
