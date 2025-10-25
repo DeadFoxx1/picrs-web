@@ -74,7 +74,7 @@ fn Slider(read: ReadSignal<usize>, write: WriteSignal<usize>, name: String) -> i
             type="range"
             id="slider"
             min="1"
-            max="90"
+            max="100"
             value=read
             on:input=move |ev| {
                 let value = event_target_value(&ev).parse::<usize>().unwrap_or(1);
