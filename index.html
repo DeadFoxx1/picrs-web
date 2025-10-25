@@ -10,12 +10,13 @@
 
   .row {
     position: absolute;
+    display: flex;
   }
 
   .cell {
+    box-sizing: border-box;
     border-width: 1px;
-
-    position: absolute;
+    flex: 1;
 
     height: inherit;
 
@@ -28,7 +29,6 @@
   }
 
   .grid {
-
     position: relative;
 
     border: solid 1px;
