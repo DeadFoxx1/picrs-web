@@ -8,11 +8,16 @@
     height: 100vh;
   }
 
+  .row {
+    position: absolute;
+  }
+
   .cell {
-    box-sizing: border-box;
     border-width: 1px;
 
     position: absolute;
+
+    height: inherit;
 
     border-top-style: none;
     border-left-style: none;
@@ -24,13 +29,11 @@
 
   .grid {
 
-    aspect-ratio: 1/1;
-
     position: relative;
 
     border: solid 1px;
     height: 100%;
-    /*max-width: 500px;*/
-    max-height: 500px;*/
+    max-height: 500px;
+    max-width: 500px
   }
 </style>

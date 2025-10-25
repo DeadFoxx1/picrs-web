@@ -13,17 +13,18 @@ fn Grid() -> impl IntoView {
     let (colcount, set_colcount) = signal(5 as usize);
     let grid: NodeRef<Div> = NodeRef::new();
 
-    let (cellsize, set_cellsize) = signal(0 as f64);
+    //this should be updated as soon as the grid is mounted 
+    let (cell_size, set_cell_size) = signal(0.0);
 
-    Effect::new(move || {
-        if let Some(element) = grid.get() {
-            if rowcount.get() > colcount.get() {
-                set_cellsize.set(element.client_height() as f64 / rowcount.get() as f64)
-            } else {
-                set_cellsize.set(element.client_width() as f64 / colcount.get() as f64)
-            }
-        }
-    });
+     Effect::new(move || {
+         if let Some(element) = grid.get() {
+             if rowcount.get() > colcount.get() {
+                 set_cell_size.set(element.client_height() as f64 / rowcount.get() as f64)
+             } else {
+                 set_cell_size.set(element.client_width() as f64 / colcount.get() as f64)
+             }
+         }
+     });
 
     view! {
         <div>
@@ -34,34 +35,35 @@ fn Grid() -> impl IntoView {
         </div>
 
         <div class="grid" node_ref=grid>
+
             <For
-                each=move || 0..(rowcount.get() * colcount.get())
+                each=move || 0..rowcount.get()
                 key=|index| *index
-                children=move |index| {
+                children=move |y| {
                     view! {
-                        <div
-                            style:top=move || {
-                                format!(
-                                    "{}px",
-                                    cellsize.get() * (index as f64 / colcount.get() as f64).floor(),
-                                )
-                            }
-                            style:left=move || {
-                                format!(
-                                    "{}px",
-                                    cellsize.get() * (index as f64 % colcount.get() as f64),
-                                )
-                            }
-                            style:width=move || format!("{}px", cellsize.get())
-                            class="cell"
-                        ></div>
+                        <div class="row" style:top=move || format!("{}px", cell_size.get() * y as f64) style:height=move || format!("{}px", cell_size.get())>
+                            <For
+                                each=move || 0..colcount.get()
+                                key=|index| *index
+                                children=move |x| {
+                                    view! {
+                                        <div
+                                            /*style:width=move || { format!("{}px", cell_size.get()) }*/
+                                            style:left=move || {
+                                                format!("{}px", cell_size.get() * x as f64)
+                                            }
+                                            class="cell"
+                                        ></div>
+                                    }
+                                }
+                            />
+                        </div>
                     }
                 }
             />
         </div>
     }
 }
-
 #[component]
 fn Slider(read: ReadSignal<usize>, write: WriteSignal<usize>, name: String) -> impl IntoView {
     view! {
