@@ -5,17 +5,19 @@
 </html>
 <style>
   :root {
-    --border-width: 1px;
-    --nth-border-width: 2px;
+    --border-width: 2px;
+    --nth-border-width: 4px;
   }
+
   body {
     height: 100vh;
   }
+
   .grid {
     position: relative;
     height: 100%;
-    max-height: 500px;
-    max-width: 500px;
+    max-height: 700px;
+    max-width: 700px;
   }
 
   .row {
@@ -23,12 +25,17 @@
     display: flex;
   }
 
-  .row:nth-child(5n) .cell{
-    border-bottom-width: 2px;
+  .row:nth-child(5n) .cell {
     border-bottom-width: calc(var(--nth-border-width) / 2);
   }
-  .row:nth-child(5n + 1) .cell{
+  .row:nth-child(5n + 1) .cell {
     border-top-width: calc(var(--nth-border-width) / 2);
+  }
+  .row:first-child .cell {
+    border-top-width: var(--border-width);
+  }
+  .row:last-child .cell {
+    border-bottom-width: var(--border-width);
   }
 
   .cell {
@@ -45,5 +52,8 @@
   }
   .cell:nth-child(5n + 1) {
     border-left-width: calc(var(--nth-border-width) / 2);
+  }
+  .cell:last-child {
+    border-right-width: var(--border-width);
   }
 </style>
