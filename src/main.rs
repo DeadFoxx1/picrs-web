@@ -11,9 +11,7 @@ fn App() -> impl IntoView {
     let (colcount, set_colcount) = signal(5 as usize);
     let grid: NodeRef<Div> = NodeRef::new();
 
-    let handle = window_event_listener(ev::resize, move |_| {
-        set_rowcount.set(rowcount.get())
-    });
+    let handle = window_event_listener(ev::resize, move |_| set_rowcount.set(rowcount.get()));
     on_cleanup(move || handle.remove());
 
     //this should be updated as soon as the grid is mounted
@@ -33,12 +31,8 @@ fn App() -> impl IntoView {
     });
 
     view! {
-        <div>
-            <Slider name="number of rows: ".to_string() read=rowcount write=set_rowcount></Slider>
-        </div>
-        <div>
-            <Slider name="number of cols: ".to_string() read=colcount write=set_colcount></Slider>
-        </div>
+        <Slider name="number of rows: ".to_string() read=rowcount write=set_rowcount></Slider>
+        <Slider name="number of cols: ".to_string() read=colcount write=set_colcount></Slider>
 
         <div class="grid" node_ref=grid>
 
@@ -77,7 +71,7 @@ fn Slider(read: ReadSignal<usize>, write: WriteSignal<usize>, name: String) -> i
             type="range"
             id="slider"
             min="1"
-            max="100"
+            max="30"
             value=read
             on:input=move |ev| {
                 let value = event_target_value(&ev).parse::<usize>().unwrap_or(1);
