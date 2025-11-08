@@ -1,6 +1,8 @@
+use leptos::ev::{mousedown, mouseup};
 use leptos::html::Div;
 use leptos::mount::mount_to_body;
 use leptos::{ev, prelude::*};
+use picrs_lib::table::Table;
 fn main() {
     console_error_panic_hook::set_once();
     mount_to_body(App);
@@ -9,6 +11,8 @@ fn main() {
 fn App() -> impl IntoView {
     let (rowcount, set_rowcount) = signal(5 as usize);
     let (colcount, set_colcount) = signal(5 as usize);
+    let (filled, set_filled) = signal(5 as usize);
+
     let grid: NodeRef<Div> = NodeRef::new();
 
     let handle = window_event_listener(ev::resize, move |_| set_rowcount.set(rowcount.get()));
@@ -30,36 +34,56 @@ fn App() -> impl IntoView {
         }
     });
 
+    let data = Signal::derive(move || Table::new(colcount.get(), rowcount.get(), filled.get()));
+    let (dragging, set_dragging) = signal(false);
+
+    window_event_listener(mousedown, move |_| set_dragging.set(true));
+    window_event_listener(mouseup, move |_| set_dragging.set(false));
+
     view! {
         <Slider name="number of rows: ".to_string() read=rowcount write=set_rowcount></Slider>
         <Slider name="number of cols: ".to_string() read=colcount write=set_colcount></Slider>
 
-        <div class="grid" node_ref=grid>
+        <div id="table">
+            <div id="grid" node_ref=grid>
 
-            <For
-                each=move || 0..rowcount.get()
-                key=|index| *index
-                children=move |y| {
-                    view! {
-                        <div
-                            class="row"
-                            style:top=move || format!("{}px", cell_size.get() * y as f64)
-                            style:width=move || {
-                                format!("{}px", cell_size.get() * colcount.get() as f64)
-                            }
-                            style:height=move || format!("{}px", cell_size.get())
-                        >
-                            <For
-                                each=move || 0..colcount.get()
-                                key=|index| *index
-                                children=move |_| {
-                                    view! { <div class="cell"></div> }
+                <For
+                    each=move || 0..rowcount.get()
+                    key=|index| *index
+                    children=move |y| {
+                        view! {
+                            <div
+                                class="row"
+                                style:top=move || format!("{}px", cell_size.get() * y as f64)
+                                style:width=move || {
+                                    format!("{}px", cell_size.get() * colcount.get() as f64)
                                 }
-                            />
-                        </div>
+                                style:height=move || format!("{}px", cell_size.get())
+                            >
+                                <For
+                                    each=move || 0..colcount.get()
+                                    key=|index| *index
+                                    children=move |_| {
+                                        view! {
+                                            <div
+                                                on:mousedown:target=move |ev| {
+                                                    let _ = ev.target().class_list().toggle("filled");
+                                                }
+                                                on:mouseover:target=move |ev| {
+                                                    if dragging.get() {
+                                                        let _ = ev.target().class_list().toggle("filled");
+                                                    }
+                                                }
+                                                class="cell"
+                                            ></div>
+                                        }
+                                    }
+                                />
+                            </div>
+                        }
                     }
-                }
-            />
+                />
+            </div>
         </div>
     }
 }
